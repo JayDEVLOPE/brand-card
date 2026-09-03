@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Equinox Resort Amaala — Brand Card</title>
+<style>
+  :root{
+    --bg:#000000;
+    --hint:#8a8a8a;
+    --line:#ffffff;
+    --flip-speed:.8s;
+
+    /* ==== BUTTON POSITION ON THE BACK FACE ====
+       Percentages of the card. Tune to match your design. */
+    --btn-right:5%;
+    --btn-bottom:8%;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:26px;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    overflow:hidden;
+    padding:24px;
+  }
+
+  /* ---- The card: 16:9 landscape ---- */
+  .scene{
+    width:min(94vw, 760px);
+    aspect-ratio:16/9;
+    perspective:1800px;
+    cursor:pointer;
+  }
+  .card{
+    position:relative;
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+    transition:transform var(--flip-speed) cubic-bezier(.4,.1,.16,1);
+  }
+  .card.flipped{transform:rotateY(180deg)}
+
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.55);
+    background:#111;
+  }
+  .face img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .face.back{transform:rotateY(180deg)}
+
+  /* ---- Button ON the back of the card, bottom right ---- */
+  .more{
+    position:absolute;
+    right:var(--btn-right);
+    bottom:var(--btn-bottom);
+    transform:translateY(8px);
+    color:var(--line);
+    border:1px solid rgba(255,255,255,.55);
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    text-decoration:none;
+    font-size:12px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    padding:12px 26px;
+    border-radius:999px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease .45s, transform .5s ease .45s,
+               background .3s ease, color .3s ease;
+    white-space:nowrap;
+  }
+  .card.flipped .more{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateY(0);
+  }
+  .more:hover, .more:active{
+    background:var(--line);
+    color:#000;
+  }
+
+  /* ---- Tap hint ---- */
+  .hint{
+    color:var(--hint);
+    font-size:12px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    user-select:none;
+    transition:opacity .6s ease;
+  }
+  .hint.hidden{opacity:0}
+
+  @media (prefers-reduced-motion: reduce){
+    .card{transition:none}
+    .more{transition:opacity .3s ease}
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene" id="scene" role="button" aria-label="Tap to flip the card" tabindex="0">
+    <div class="card" id="card">
+      <div class="face front">
+        <img src="front.jpg" alt="Card — front">
+      </div>
+      <div class="face back">
+        <img src="back.png" alt="Card — back">
+        <a class="more" href="info.pdf" id="moreBtn">More information</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">Tap to flip</div>
+
+<script>
+  const scene = document.getElementById('scene');
+  const card  = document.getElementById('card');
+  const hint  = document.getElementById('hint');
+  const more  = document.getElementById('moreBtn');
+
+  // Don't let the button press also flip the card
+  more.addEventListener('click', e => e.stopPropagation());
+
+  let flipped = false;
+  function flip(){
+    flipped = !flipped;
+    card.classList.toggle('flipped', flipped);
+    hint.classList.add('hidden');
+  }
+
+  scene.addEventListener('click', flip);
+  scene.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); }
+  });
+</script>
+</body>
+</html>
